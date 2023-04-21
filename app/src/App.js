@@ -1,24 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import { createContext, useEffect, useState } from 'react';
+import Header from './Components/Header/Header';
+import HomePage from './Components/Home/HomePage';
+import Footer from './Components/Footer/Footer';
+import AboutUs from './Components/AboutUs/AboutUs';
+import Content from './Components/Content/Content';
+import Counter from './Components/Counter/Counter';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { getPhotos } from './Apis/getPhotos';
+
+export const ImageContext = createContext([]);
 
 function App() {
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      const data = await getPhotos();
+      setImages(data);
+    };
+    fetchPhotos();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ImageContext.Provider value={{ images }}>
+      <BrowserRouter>
+        <div>
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route
+              path="/content"
+              element={<Content title={'Tierra del Fuego'} />}
+            />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/counter" element={<Counter />} />
+          </Routes>
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </ImageContext.Provider>
   );
 }
 
